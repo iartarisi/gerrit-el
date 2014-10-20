@@ -19,14 +19,14 @@
 
 
 (defun format-time (seconds-since-epoch)
-  "Formats timestamp provided as seconds since epoch, returns a string"
-  ;; XXX this should be replaced with a proper relative-time function
-  ;; like the Web UI does
+  "Format timestamp provided as seconds since epoch; returns a string"
+  ;; TODO this should be replaced with a proper relative-time function
+  ;; like the Web UI has
   (current-time-string (seconds-to-time seconds-since-epoch)))
 
 (defun line-from-review (review)
-  "Takes a review given as an alist parsed from the gerrit API
-and returns line of information about that change ready to be
+  "Take a review given as an alist parsed from the gerrit API and
+return a line of information about that change ready to be
 printed."
   (format "%7s %30s %10s %10s %10s"
           (cdr (assoc 'number review))
@@ -35,3 +35,22 @@ printed."
           (s-truncate 20 (cdr (assoc 'project review)))
           ;; TODO make the timestamp shorter (use relative timestamps)
           (format-time (cdr (assoc 'lastUpdated review)))))
+
+(defun detail-review (review)
+  "Take a review given as an alist parsed from the gerrit API and
+  open a new buffer with all the information in that review"
+  ;; XXX there's got to be a version of mapconcat that doesn't require
+  ;; currying with the 'apply function
+  (mapconcat (apply-partially 'apply (apply-partially 'format "%-15s %s"))
+             ;; XXX there's got to be a better way than repeating
+             ;; `(cdr assoc` everywhere
+             `(("Change-Id" ,(cdr (assoc 'id review)))
+               ("Owner" ,(cdr (assoc 'name (cdr (assoc 'owner review)))))
+               ("Project" ,(cdr (assoc 'project review)))
+               ("Branch" ,(cdr (assoc 'branch review)))
+               ("Topic" ,(cdr (assoc 'topic review)))
+               ("Created" ,(format-time (cdr (assoc 'createdOn review))))
+               ("Updated" ,(format-time (cdr (assoc 'lastUpdated review))))
+               ("Status" ,(cdr (assoc 'status review)))
+               )
+             "\n"))
