@@ -18,6 +18,12 @@
   (line-from-review review))
 
 
+(defun format-time (seconds-since-epoch)
+  "Formats timestamp provided as seconds since epoch, returns a string"
+  ;; XXX this should be replaced with a proper relative-time function
+  ;; like the Web UI does
+  (current-time-string (seconds-to-time seconds-since-epoch)))
+
 (defun line-from-review (review)
   "Takes a review given as an alist parsed from the gerrit API
 and returns line of information about that change ready to be
@@ -28,4 +34,4 @@ printed."
           (cdr (assoc 'status review))
           (s-truncate 20 (cdr (assoc 'project review)))
           ;; TODO make the timestamp shorter (use relative timestamps)
-          (current-time-string (seconds-to-time (cdr (assoc 'lastUpdated review))))))
+          (format-time (cdr (assoc 'lastUpdated review)))))
