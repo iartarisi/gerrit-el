@@ -74,6 +74,17 @@ printed."
              (list (assoc-default 'number patch-set)
                    (assoc-default 'revision patch-set)))
            (assoc-default 'patchSets review)))
+   "\n"
+   (apply 'columnize "%-70s  %4s, %4s"
+          (mapcar
+           (lambda (file)
+             (list (if (equal "/COMMIT_MSG" (assoc-default 'file file))
+                       "Commit Message"
+                     (assoc-default 'file file)
+                     )
+                   (format "+%s" (assoc-default 'insertions file))
+                   (assoc-default 'deletions file)))
+           (assoc-default 'files (assoc-default 'currentPatchSet review))))
    ))
 
 (detail-review (json-read-from-string res))

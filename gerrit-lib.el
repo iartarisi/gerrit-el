@@ -39,6 +39,7 @@
                   "--format=JSON"
                   "--all-approvals"
                   "--current-patch-set"
+                  "--files"
                   (concat "project:" prj)
                   (concat "status:" (or status "open"))))
 
