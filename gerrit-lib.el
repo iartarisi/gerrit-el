@@ -46,3 +46,14 @@
   (shell-command-to-string
    (concat (executable-find "ssh") " "
            (apply #'gerrit-command cmd args))))
+
+(defun columnize (format-s &rest lines)
+  "Arrange lines according to `format`. `lines` must be a list of
+  lists matching the number of interpolated strings in
+  `format`"
+  ;; XXX there's got to be a version of mapconcat that doesn't require
+  ;; currying with the 'apply function
+  (mapconcat (apply-partially 'apply (apply-partially 'format format-s))
+             lines
+             "\n"))
+

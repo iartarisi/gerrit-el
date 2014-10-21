@@ -39,18 +39,13 @@ printed."
 (defun detail-review (review)
   "Take a review given as an alist parsed from the gerrit API and
   open a new buffer with all the information in that review"
-  ;; XXX there's got to be a version of mapconcat that doesn't require
-  ;; currying with the 'apply function
-  (mapconcat (apply-partially 'apply (apply-partially 'format "%-15s %s"))
-             ;; XXX there's got to be a better way than repeating
-             ;; `(cdr assoc` everywhere
-             `(("Change-Id" ,(cdr (assoc 'id review)))
-               ("Owner" ,(cdr (assoc 'name (cdr (assoc 'owner review)))))
-               ("Project" ,(cdr (assoc 'project review)))
-               ("Branch" ,(cdr (assoc 'branch review)))
-               ("Topic" ,(cdr (assoc 'topic review)))
-               ("Created" ,(format-time (cdr (assoc 'createdOn review))))
-               ("Updated" ,(format-time (cdr (assoc 'lastUpdated review))))
-               ("Status" ,(cdr (assoc 'status review)))
-               )
-             "\n"))
+  (concat
+   (columnize "%-15s %s"
+              (list "Change-Id" (cdr (assoc 'id review)))
+              (list "Owner" (cdr (assoc 'name (cdr (assoc 'owner review)))))
+              (list "Project" (cdr (assoc 'project review)))
+              (list "Branch" (cdr (assoc 'branch review)))
+              (list "Topic" (cdr (assoc 'topic review)))
+              (list "Created" (format-time (cdr (assoc 'createdOn review))))
+              (list "Updated" (format-time (cdr (assoc 'lastUpdated review))))
+              (list "Status" (cdr (assoc 'status review))))))
