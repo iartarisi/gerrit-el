@@ -87,4 +87,5 @@ printed."
            (assoc-default 'files (assoc-default 'currentPatchSet review))))
    ))
 
-(detail-review (json-read-from-string res))
+(defvar-local change (json-read-from-string (gerrit-query-everything "125030")))
+(detail-review change)

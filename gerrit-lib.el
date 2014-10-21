@@ -43,6 +43,16 @@
                   (concat "project:" prj)
                   (concat "status:" (or status "open"))))
 
+(defun gerrit-query-everything (query)
+  "Query gerrit and return all the information used to build a Change page.
+`query` should be a Change id or hash"
+  (gerrit-ssh-cmd "query"
+                  "--format=JSON"
+                  "--all-approvals"
+                  "--current-patch-set"
+                  "--files"
+                  query))
+
 (defun gerrit-ssh-cmd (cmd &rest args)
   (shell-command-to-string
    (concat (executable-find "ssh") " "
