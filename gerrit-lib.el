@@ -24,7 +24,7 @@
 
 (defun gerrit-command (cmd &rest args)
   (let ((gcmd (concat
-               "-x -p 29418 "
+               "-x -p 29418 -q "
                (or gerrit-credentials
                    (error "`gerrit-credentials' must be set!"))
                " "
