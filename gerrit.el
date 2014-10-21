@@ -66,6 +66,14 @@ printed."
                    (if (equal "Workflow" (assoc-default 'type approval))
                        (assoc-default 'value approval)
                      "")))
-           (assoc-default 'approvals (assoc-default 'currentPatchSet review))))))
+           (assoc-default 'approvals (assoc-default 'currentPatchSet review))))
+   "\n\n"
+   (apply 'columnize "Patch Set %2s - %s"
+          (mapcar
+           (lambda (patch-set)
+             (list (assoc-default 'number patch-set)
+                   (assoc-default 'revision patch-set)))
+           (assoc-default 'patchSets review)))
+   ))
 
 (detail-review (json-read-from-string res))
