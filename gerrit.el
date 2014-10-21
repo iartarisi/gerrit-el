@@ -29,23 +29,23 @@
 return a line of information about that change ready to be
 printed."
   (format "%7s %30s %10s %10s %10s"
-          (cdr (assoc 'number review))
-          (s-truncate 30 (cdr (assoc 'subject review)))
-          (cdr (assoc 'status review))
-          (s-truncate 20 (cdr (assoc 'project review)))
+          (assoc-default 'number review)
+          (s-truncate 30 (assoc-default 'subject review))
+          (assoc-default 'status review)
+          (s-truncate 20 (assoc-default 'project review))
           ;; TODO make the timestamp shorter (use relative timestamps)
-          (format-time (cdr (assoc 'lastUpdated review)))))
+          (format-time (assoc-default 'lastUpdated review))))
 
 (defun detail-review (review)
   "Take a review given as an alist parsed from the gerrit API and
   open a new buffer with all the information in that review"
   (concat
    (columnize "%-15s %s"
-              (list "Change-Id" (cdr (assoc 'id review)))
-              (list "Owner" (cdr (assoc 'name (cdr (assoc 'owner review)))))
-              (list "Project" (cdr (assoc 'project review)))
-              (list "Branch" (cdr (assoc 'branch review)))
-              (list "Topic" (cdr (assoc 'topic review)))
-              (list "Created" (format-time (cdr (assoc 'createdOn review))))
-              (list "Updated" (format-time (cdr (assoc 'lastUpdated review))))
-              (list "Status" (cdr (assoc 'status review))))))
+              (list "Change-Id" (assoc-default 'id review))
+              (list "Owner" (assoc-default 'name (assoc-default 'owner review)))
+              (list "Project" (assoc-default 'project review))
+              (list "Branch" (assoc-default 'branch review))
+              (list "Topic" (assoc-default 'topic review))
+              (list "Created" (format-time (assoc-default 'createdOn review)))
+              (list "Updated" (format-time (assoc-default 'lastUpdated review)))
+              (list "Status" (assoc-default 'status review)))))
