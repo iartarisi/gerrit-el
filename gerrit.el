@@ -48,4 +48,24 @@ printed."
               (list "Topic" (assoc-default 'topic review))
               (list "Created" (format-time (assoc-default 'createdOn review)))
               (list "Updated" (format-time (assoc-default 'lastUpdated review)))
-              (list "Status" (assoc-default 'status review)))))
+              (list "Status" (assoc-default 'status review)))
+   "\n\n"
+   (assoc-default 'commitMessage review)
+   "\n\n"
+   (apply 'columnize "%-20s %11s  %8s  %8s"
+          '("Name" "Code-Review" "Verified" "Workflow")
+          (mapcar
+           (lambda (approval)
+             (list (assoc-default 'name (assoc-default 'by approval))
+                   (if (equal "Code-Review" (assoc-default 'type approval))
+                       (assoc-default 'value approval)
+                     "")
+                   (if (equal "Verified" (assoc-default 'type approval))
+                       (assoc-default 'value approval)
+                     "")
+                   (if (equal "Workflow" (assoc-default 'type approval))
+                       (assoc-default 'value approval)
+                     "")))
+           (assoc-default 'approvals (assoc-default 'currentPatchSet review))))))
+
+(detail-review (json-read-from-string res))
