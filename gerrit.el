@@ -21,7 +21,7 @@
 return a line of information about that change ready to be
 printed."
   (let ((review (json-read-from-string review-json)))
-    (format "%7s %30s %10s %10s %10s"
+    (format "%7s %-30s %10s %10s %10s"
             (assoc-default 'number review)
             (s-truncate 30 (assoc-default 'subject review))
             (assoc-default 'status review)
