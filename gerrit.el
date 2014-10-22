@@ -107,3 +107,20 @@ printed."
                       (format-time (assoc-default 'timestamp comment)))
               (when body (concat "\n" body))))))
 (detail-review change)
+
+(defun open-change (change-id)
+  "Open a change in a new buffer and switch to it"
+  (let ((buf (get-buffer-create (format "*gerrit: %s*" change-id))))
+    (set-buffer buf)
+    (toggle-read-only)
+    (erase-buffer)
+    (insert
+     (detail-review
+      (json-read-from-string
+       (gerrit-query-everything "125030"))))
+    (toggle-read-only)
+    (goto-char 0)
+    (switch-to-buffer buf)))
+
+(open-change "125030")
+
