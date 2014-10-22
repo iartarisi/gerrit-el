@@ -105,5 +105,5 @@ printed."
                       (assoc-default 'name (assoc-default 'reviewer comment))
                       header
                       (format-time (assoc-default 'timestamp comment)))
-              "\n" body))))
+              (when body (concat "\n" body))))))
 (detail-review change)
