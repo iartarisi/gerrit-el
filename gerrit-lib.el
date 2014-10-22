@@ -14,6 +14,7 @@
 ;; Parts of this code originated in the `magit-gerrit` project by `terranpro`
 
 (require 'json)
+(require 'memoize)
 
 (defvar-local gerrit-credentials "mapleoin@review.openstack.org")
 
@@ -40,7 +41,7 @@
                   (concat "project:" prj)
                   (concat "status:" (or status "open"))))
 
-(defun gerrit-query-everything (query)
+(defmemoize gerrit-query-everything (query)
   "Query gerrit and return all the information used to build a Change page.
 `query` should be a Change id or hash"
   (gerrit-ssh-cmd "query"
