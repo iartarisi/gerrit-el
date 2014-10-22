@@ -89,7 +89,21 @@ printed."
                    (format "+%s" (assoc-default 'insertions file))
                    (assoc-default 'deletions file)))
            (assoc-default 'files (assoc-default 'currentPatchSet review))))
+   "\n\n\n"
+   (mapconcat 'display-comment
+              (assoc-default 'comments review)
+              "\n\n")
    ))
 
 (defvar-local change (json-read-from-string (gerrit-query-everything "125030")))
+(defun display-comment (comment)
+  "Format a comment given as an alist; return a string"
+  (let ((split-message (s-split-up-to "\n" (assoc-default 'message comment) 1)))
+    (let ((header (car split-message))
+          (body (cadr split-message)))
+      (concat (format "%s: %s (%s)"
+                      (assoc-default 'name (assoc-default 'reviewer comment))
+                      header
+                      (format-time (assoc-default 'timestamp comment)))
+              "\n" body))))
 (detail-review change)

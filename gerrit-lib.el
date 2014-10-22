@@ -47,6 +47,7 @@
                   "--format=JSON"
                   "--all-approvals"
                   "--current-patch-set"
+                  "--comments"
                   "--files"
                   query))
 
