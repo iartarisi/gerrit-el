@@ -72,6 +72,20 @@
   ;; like the Web UI has
   (current-time-string (seconds-to-time seconds-since-epoch)))
 
+(defmacro gerrit-lib-with-make-buffer (name content &rest commands)
+  "Create or replace buffer with `name` using `content`. Then
+  execute any `commands` before making it read-only and bringing
+  it to the forefront."
+  `(let ((buf (get-buffer-create (format "*gerrit: %s*" ,name))))
+     (with-current-buffer buf
+       (setq buffer-read-only nil)
+       (erase-buffer)
+       (insert ,content)
+       ,@commands
+       (setq buffer-read-only t)
+       (goto-char 0))
+     (switch-to-buffer buf)))
+
 (defun gerrit-lib-positivize (vote)
   "Add a + sign where there is no -. Useful for +1/+2 reviews"
   (if (string-match (rx-to-string `(: bos "-") t)

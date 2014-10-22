@@ -107,17 +107,11 @@ printed."
 
 (defun gerrit-open-change (change-id)
   "Open a change in a new buffer and switch to it"
-  (let ((buf (get-buffer-create (format "*gerrit: %s*" change-id))))
-    (set-buffer buf)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (insert
-     (gerrit-detail-review
-      (json-read-from-string
-       (gerrit-lib-query-everything "125030"))))
-    (setq buffer-read-only t)
-    (goto-char 0)
-    (switch-to-buffer buf)))
+  (gerrit-lib-with-make-buffer change-id
+                               (gerrit-detail-review
+                                (json-read-from-string
+                                 (gerrit-lib-query-everything change-id)))
+                               (setq buffer-read-only t)))
 
 (gerrit-open-change "125030")
 
