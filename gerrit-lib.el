@@ -71,3 +71,16 @@
   ;; TODO this should be replaced with a proper relative-time function
   ;; like the Web UI has
   (current-time-string (seconds-to-time seconds-since-epoch)))
+
+(defun positivize (vote)
+  "Add a + sign where there is no -. Useful for +1/+2 reviews"
+  (if (string-match (rx-to-string `(: bos "-") t)
+                    vote)
+      vote
+    (concat "+" vote)))
+
+(defun string/starts-with (string prefix)
+      "Return t if STRING starts with prefix."
+      (and (string-match (rx-to-string `(: bos ,prefix) t)
+                         string)
+           t))
