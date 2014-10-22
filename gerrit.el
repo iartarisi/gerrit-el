@@ -19,11 +19,6 @@
   (line-from-review review))
 
 
-(defun format-time (seconds-since-epoch)
-  "Format timestamp provided as seconds since epoch; returns a string"
-  ;; TODO this should be replaced with a proper relative-time function
-  ;; like the Web UI has
-  (current-time-string (seconds-to-time seconds-since-epoch)))
 
 (defun line-from-review (review-json)
   "Take a review given as a line of JSON from the gerrit API and

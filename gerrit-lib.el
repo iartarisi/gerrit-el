@@ -64,3 +64,9 @@
   (mapconcat (apply-partially 'apply (apply-partially 'format format-s))
              lines
              "\n"))
+
+(defun format-time (seconds-since-epoch)
+  "Format timestamp provided as seconds since epoch; returns a string"
+  ;; TODO this should be replaced with a proper relative-time function
+  ;; like the Web UI has
+  (current-time-string (seconds-to-time seconds-since-epoch)))
