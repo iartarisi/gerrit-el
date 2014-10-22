@@ -31,7 +31,7 @@ printed."
 
 (defun gerrit-list-project (json)
   "Take a JSON document from a project listing and return a list of changes"
-  (mapconcat 'line-from-review
+  (mapconcat 'gerrit-line-from-review
              (butlast ;; the last item is just stats about the API query
               (split-string json "\n" t))
              "\n"))
