@@ -118,7 +118,7 @@ printed."
   "Open a project's changes in a new buffer and switch to it"
   (gerrit-lib-with-make-buffer project
                                (gerrit-list-project project)
-                               ()))
+                               (hl-line-mode)))
 
 ;; Example code
 ;; (gerrit-open-change "125030")
