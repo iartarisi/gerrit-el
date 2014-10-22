@@ -108,11 +108,18 @@ printed."
 
 (defun gerrit-open-change (change-id)
   "Open a change in a new buffer and switch to it"
+  (message (concat "gerrit-open-change" change-id))
   (gerrit-lib-with-make-buffer change-id
                                (gerrit-detail-review
                                 (json-read-from-string
                                  (gerrit-lib-query-everything change-id)))
                                (setq buffer-read-only t)))
+
+(defun gerrit-open-change-on-line ()
+  "Take a line starting with a change number and open the change it references"
+  (interactive)
+  (let ((projline (thing-at-point 'line)))
+    (gerrit-open-change (match-string 0 projline))))
 
 (defun gerrit-open-project (project)
   "Open a project's changes in a new buffer and switch to it"
@@ -120,6 +127,7 @@ printed."
    (hl-line-mode)
    (use-local-map (let ((map (make-keymap)))
                     (define-key map (kbd "q") 'gerrit-lib-quit-window)
+                    (define-key map (kbd "RET") 'gerrit-open-change-on-line)
                     map))))
 
 ;; Example code
