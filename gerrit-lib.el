@@ -34,7 +34,7 @@
                (mapconcat 'identity args " "))))
     gcmd))
 
-(defun gerrit-lib-query-project (prj &optional status)
+(defmemoize gerrit-lib-query-project (prj &optional status)
   (gerrit-lib-ssh-cmd "query"
                   "--format=JSON"
                   (concat "project:" prj)
