@@ -14,11 +14,7 @@
 (require 's)
 (require 'json)
 
-(defvar-local res  (gerrit-query "stackforge/cookbook-openstack-common"))
-(let ((review (json-read-from-string res)))
-  (line-from-review review))
-
-
+(defvar-local res (gerrit-query-project "stackforge/cookbook-openstack-common"))
 
 (defun line-from-review (review-json)
   "Take a review given as a line of JSON from the gerrit API and
@@ -95,7 +91,6 @@ printed."
               "\n\n")
    ))
 
-(defvar-local change (json-read-from-string (gerrit-query-everything "125030")))
 (defun display-comment (comment)
   "Format a comment given as an alist; return a string"
   (let ((split-message (s-split-up-to "\n" (assoc-default 'message comment) 1)))
@@ -106,7 +101,6 @@ printed."
                       header
                       (format-time (assoc-default 'timestamp comment)))
               (when body (concat "\n" body))))))
-(detail-review change)
 
 (defun open-change (change-id)
   "Open a change in a new buffer and switch to it"
