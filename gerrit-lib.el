@@ -34,12 +34,9 @@
                (mapconcat 'identity args " "))))
     gcmd))
 
-(defun gerrit-query (prj &optional status)
+(defun gerrit-query-project (prj &optional status)
   (gerrit-ssh-cmd "query"
                   "--format=JSON"
-                  "--all-approvals"
-                  "--current-patch-set"
-                  "--files"
                   (concat "project:" prj)
                   (concat "status:" (or status "open"))))
 
@@ -67,4 +64,3 @@
   (mapconcat (apply-partially 'apply (apply-partially 'format format-s))
              lines
              "\n"))
-
