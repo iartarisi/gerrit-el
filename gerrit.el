@@ -14,9 +14,9 @@
 (require 's)
 (require 'json)
 
-(defvar-local res (gerrit-query-project "stackforge/cookbook-openstack-common"))
+(defvar-local res (gerrit-lib-query-project "stackforge/cookbook-openstack-common"))
 
-(defun line-from-review (review-json)
+(defun gerrit-line-from-review (review-json)
   "Take a review given as a line of JSON from the gerrit API and
 return a line of information about that change ready to be
 printed."
@@ -27,55 +27,57 @@ printed."
             (assoc-default 'status review)
             (s-truncate 20 (assoc-default 'project review))
             ;; TODO make the timestamp shorter (use relative timestamps)
-            (format-time (assoc-default 'lastUpdated review)))))
+            (gerrit-lib-format-time (assoc-default 'lastUpdated review)))))
 
-(defun list-project (json)
+(defun gerrit-list-project (json)
   "Take a JSON document from a project listing and return a list of changes"
   (mapconcat 'line-from-review
              (butlast ;; the last item is just stats about the API query
               (split-string json "\n" t))
              "\n"))
 
-(defun detail-review (review)
+(defun gerrit-detail-review (review)
   "Take a review given as an alist parsed from the gerrit API and
   open a new buffer with all the information in that review"
   (concat
-   (columnize "%-15s %s"
+   (gerrit-lib-columnize "%-15s %s"
               (list "Change-Id" (assoc-default 'id review))
               (list "Owner" (assoc-default 'name (assoc-default 'owner review)))
               (list "Project" (assoc-default 'project review))
               (list "Branch" (assoc-default 'branch review))
               (list "Topic" (assoc-default 'topic review))
-              (list "Created" (format-time (assoc-default 'createdOn review)))
-              (list "Updated" (format-time (assoc-default 'lastUpdated review)))
+              (list "Created" (gerrit-lib-format-time
+                               (assoc-default 'createdOn review)))
+              (list "Updated" (gerrit-lib-format-time
+                               (assoc-default 'lastUpdated review)))
               (list "Status" (assoc-default 'status review)))
    "\n\n"
    (assoc-default 'commitMessage review)
    "\n\n"
-   (apply 'columnize "%-20s %11s  %8s  %8s"
+   (apply 'gerrit-lib-columnize "%-20s %11s  %8s  %8s"
           '("Name" "Code-Review" "Verified" "Workflow")
           (mapcar
            (lambda (approval)
              (list (assoc-default 'name (assoc-default 'by approval))
                    (if (equal "Code-Review" (assoc-default 'type approval))
-                       (positivize (assoc-default 'value approval))
+                       (gerrit-lib-positivize (assoc-default 'value approval))
                      "")
                    (if (equal "Verified" (assoc-default 'type approval))
-                       (positivize (assoc-default 'value approval))
+                       (gerrit-lib-positivize (assoc-default 'value approval))
                      "")
                    (if (equal "Workflow" (assoc-default 'type approval))
-                       (positivize (assoc-default 'value approval))
+                       (gerrit-lib-positivize (assoc-default 'value approval))
                      "")))
            (assoc-default 'approvals (assoc-default 'currentPatchSet review))))
    "\n\n"
-   (apply 'columnize "Patch Set %2s - %s"
+   (apply 'gerrit-lib-columnize "Patch Set %2s - %s"
           (mapcar
            (lambda (patch-set)
              (list (assoc-default 'number patch-set)
                    (assoc-default 'revision patch-set)))
            (assoc-default 'patchSets review)))
    "\n"
-   (apply 'columnize "%-70s  %4s, %4s"
+   (apply 'gerrit-lib-columnize "%-70s  %4s, %4s"
           (mapcar
            (lambda (file)
              (list (if (equal "/COMMIT_MSG" (assoc-default 'file file))
@@ -86,12 +88,12 @@ printed."
                    (assoc-default 'deletions file)))
            (assoc-default 'files (assoc-default 'currentPatchSet review))))
    "\n\n\n"
-   (mapconcat 'display-comment
+   (mapconcat 'gerrit-display-comment
               (assoc-default 'comments review)
               "\n\n")
    ))
 
-(defun display-comment (comment)
+(defun gerrit-display-comment (comment)
   "Format a comment given as an alist; return a string"
   (let ((split-message (s-split-up-to "\n" (assoc-default 'message comment) 1)))
     (let ((header (car split-message))
@@ -99,10 +101,11 @@ printed."
       (concat (format "%s: %s (%s)"
                       (assoc-default 'name (assoc-default 'reviewer comment))
                       header
-                      (format-time (assoc-default 'timestamp comment)))
+                      (gerrit-lib-format-time
+                       (assoc-default 'timestamp comment)))
               (when body (concat "\n" body))))))
 
-(defun open-change (change-id)
+(defun gerrit-open-change (change-id)
   "Open a change in a new buffer and switch to it"
   (let ((buf (get-buffer-create (format "*gerrit: %s*" change-id))))
     (set-buffer buf)
@@ -111,10 +114,12 @@ printed."
     (insert
      (detail-review
       (json-read-from-string
-       (gerrit-query-everything "125030"))))
+       (gerrit-lib-query-everything "125030"))))
     (toggle-read-only)
     (goto-char 0)
     (switch-to-buffer buf)))
 
-(open-change "125030")
+(gerrit-open-change "125030")
+
+(defvar-local gerrit-credentials "mapleoin@review.openstack.org")
 

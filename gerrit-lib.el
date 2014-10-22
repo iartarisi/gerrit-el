@@ -16,14 +16,13 @@
 (require 'json)
 (require 'memoize)
 
-(defvar-local gerrit-credentials "mapleoin@review.openstack.org")
 
-(defun gerrit-ssh-cmd (cmd &rest args)
+(defun gerrit-lib-ssh-cmd (cmd &rest args)
   (apply #'call-process
          (executable-find "ssh") nil nil nil
-         (split-string (apply #'gerrit-command cmd args))))
+         (split-string (apply #'gerrit-lib-command cmd args))))
 
-(defun gerrit-command (cmd &rest args)
+(defun gerrit-lib-command (cmd &rest args)
   (let ((gcmd (concat
                "-x -p 29418 -q "
                (or gerrit-credentials
@@ -35,16 +34,16 @@
                (mapconcat 'identity args " "))))
     gcmd))
 
-(defun gerrit-query-project (prj &optional status)
-  (gerrit-ssh-cmd "query"
+(defun gerrit-lib-query-project (prj &optional status)
+  (gerrit-lib-ssh-cmd "query"
                   "--format=JSON"
                   (concat "project:" prj)
                   (concat "status:" (or status "open"))))
 
-(defmemoize gerrit-query-everything (query)
+(defmemoize gerrit-lib-query-everything (query)
   "Query gerrit and return all the information used to build a Change page.
 `query` should be a Change id or hash"
-  (gerrit-ssh-cmd "query"
+  (gerrit-lib-ssh-cmd "query"
                   "--format=JSON"
                   "--all-approvals"
                   "--current-patch-set"
@@ -52,12 +51,12 @@
                   "--files"
                   query))
 
-(defun gerrit-ssh-cmd (cmd &rest args)
+(defun gerrit-lib-ssh-cmd (cmd &rest args)
   (shell-command-to-string
    (concat (executable-find "ssh") " "
-           (apply #'gerrit-command cmd args))))
+           (apply #'gerrit-lib-command cmd args))))
 
-(defun columnize (format-s &rest lines)
+(defun gerrit-lib-columnize (format-s &rest lines)
   "Arrange lines according to `format`. `lines` must be a list of
   lists matching the number of interpolated strings in
   `format`"
@@ -67,13 +66,13 @@
              lines
              "\n"))
 
-(defun format-time (seconds-since-epoch)
+(defun gerrit-lib-format-time (seconds-since-epoch)
   "Format timestamp provided as seconds since epoch; returns a string"
   ;; TODO this should be replaced with a proper relative-time function
   ;; like the Web UI has
   (current-time-string (seconds-to-time seconds-since-epoch)))
 
-(defun positivize (vote)
+(defun gerrit-lib-positivize (vote)
   "Add a + sign where there is no -. Useful for +1/+2 reviews"
   (if (string-match (rx-to-string `(: bos "-") t)
                     vote)
