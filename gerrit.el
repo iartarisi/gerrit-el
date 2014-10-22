@@ -116,9 +116,11 @@ printed."
 
 (defun gerrit-open-project (project)
   "Open a project's changes in a new buffer and switch to it"
-  (gerrit-lib-with-make-buffer project
-                               (gerrit-list-project project)
-                               (hl-line-mode)))
+  (gerrit-lib-with-make-buffer project (gerrit-list-project project)
+   (hl-line-mode)
+   (use-local-map (let ((map (make-keymap)))
+                    (define-key map (kbd "q") 'gerrit-lib-quit-window)
+                    map))))
 
 ;; Example code
 ;; (gerrit-open-change "125030")

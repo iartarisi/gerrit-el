@@ -93,6 +93,12 @@
       vote
     (concat "+" vote)))
 
+(defun gerrit-lib-quit-window (&optional kill-buffer)
+  "Bury the buffer and delete its window.  With a prefix argument, kill the
+buffer instead."
+  (interactive "p")
+  (quit-window kill-buffer (selected-window)))
+
 (defun string/starts-with (string prefix)
   "Return t if STRING starts with prefix."
   (and (string-match (rx-to-string `(: bos ,prefix) t)
