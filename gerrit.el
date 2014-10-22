@@ -114,7 +114,15 @@ printed."
                                  (gerrit-lib-query-everything change-id)))
                                (setq buffer-read-only t)))
 
-(gerrit-open-change "125030")
+(defun gerrit-open-project (project)
+  "Open a project's changes in a new buffer and switch to it"
+  (gerrit-lib-with-make-buffer project
+                               (gerrit-list-project project)
+                               ()))
 
-(defvar-local gerrit-credentials "mapleoin@review.openstack.org")
+;; Example code
+;; (gerrit-open-change "125030")
+;; (gerrit-open-project "openstack/nova")
+
+;; (defvar-local gerrit-credentials "mapleoin@review.openstack.org")
 
