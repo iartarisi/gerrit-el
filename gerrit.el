@@ -29,11 +29,12 @@ printed."
             ;; TODO make the timestamp shorter (use relative timestamps)
             (gerrit-lib-format-time (assoc-default 'lastUpdated review)))))
 
-(defun gerrit-list-project (json)
-  "Take a JSON document from a project listing and return a list of changes"
+(defun gerrit-list-project (project)
+  "Take a project name return a list of changes from the API"
   (mapconcat 'gerrit-line-from-review
              (butlast ;; the last item is just stats about the API query
-              (split-string json "\n" t))
+              (split-string (gerrit-lib-query-project project)
+                            "\n" t))
              "\n"))
 
 (defun gerrit-detail-review (review)
