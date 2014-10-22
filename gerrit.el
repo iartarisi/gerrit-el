@@ -109,13 +109,13 @@ printed."
   "Open a change in a new buffer and switch to it"
   (let ((buf (get-buffer-create (format "*gerrit: %s*" change-id))))
     (set-buffer buf)
-    (toggle-read-only)
+    (setq buffer-read-only nil)
     (erase-buffer)
     (insert
-     (detail-review
+     (gerrit-detail-review
       (json-read-from-string
        (gerrit-lib-query-everything "125030"))))
-    (toggle-read-only)
+    (setq buffer-read-only t)
     (goto-char 0)
     (switch-to-buffer buf)))
 
