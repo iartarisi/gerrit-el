@@ -39,17 +39,7 @@ printed."
   "Take a review given as an alist parsed from the gerrit API and
   open a new buffer with all the information in that review"
   (concat
-   (gerrit-lib-columnize "%-15s %s"
-              (list "Change-Id" (assoc-default 'id review))
-              (list "Owner" (assoc-default 'name (assoc-default 'owner review)))
-              (list "Project" (assoc-default 'project review))
-              (list "Branch" (assoc-default 'branch review))
-              (list "Topic" (assoc-default 'topic review))
-              (list "Created" (gerrit-lib-format-time
-                               (assoc-default 'createdOn review)))
-              (list "Updated" (gerrit-lib-format-time
-                               (assoc-default 'lastUpdated review)))
-              (list "Status" (assoc-default 'status review)))
+   (gerrit-display-change-metadata review)
    "\n\n"
    (assoc-default 'commitMessage review)
    "\n\n"
@@ -62,6 +52,29 @@ printed."
    (mapconcat 'gerrit-display-comment
               (assoc-default 'comments review)
               "\n\n")))
+
+(defun gerrit-display-change-metadata (review)
+  "Takes a review alist and returns a string of the change's metadata e.g.
+
+  Change-Id       If70d5ad285a349e163b3d07b6dfe0d2c64072dd8
+  Owner           John Doe
+  Project         openstack/nova
+  Branch          master
+  Topic           bp/virt-driver-cpu-pinning
+  Created         12:46
+  Updated         13:25
+  Status          NEW"
+  (gerrit-lib-columnize "%-15s %s"
+                        (list "Change-Id" (assoc-default 'id review))
+                        (list "Owner" (assoc-default 'name (assoc-default 'owner review)))
+                        (list "Project" (assoc-default 'project review))
+                        (list "Branch" (assoc-default 'branch review))
+                        (list "Topic" (assoc-default 'topic review))
+                        (list "Created" (gerrit-lib-format-time
+                                         (assoc-default 'createdOn review)))
+                        (list "Updated" (gerrit-lib-format-time
+                                         (assoc-default 'lastUpdated review)))
+                        (list "Status" (assoc-default 'status review))))
 
 (defun gerrit-display-change-reviews (review)
   "Takes a review alist and returns a table of the reviews/approvals. e.g.
