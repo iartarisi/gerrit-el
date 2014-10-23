@@ -14,7 +14,6 @@
 (require 's)
 (require 'json)
 
-(defvar-local res (gerrit-lib-query-project "stackforge/cookbook-openstack-common"))
 
 (defun gerrit-line-from-review (review-json)
   "Take a review given as a line of JSON from the gerrit API and
