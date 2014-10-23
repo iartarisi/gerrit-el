@@ -15,6 +15,7 @@
 
 (require 'json)
 (require 'memoize)
+(require 'times)
 
 
 (defun gerrit-lib-ssh-cmd (cmd &rest args)
@@ -68,9 +69,7 @@
 
 (defun gerrit-lib-format-time (seconds-since-epoch)
   "Format timestamp provided as seconds since epoch; returns a string"
-  ;; TODO this should be replaced with a proper relative-time function
-  ;; like the Web UI has
-  (current-time-string (seconds-to-time seconds-since-epoch)))
+  (times-relative (seconds-to-time seconds-since-epoch)))
 
 (defmacro gerrit-lib-with-make-buffer (name content &rest commands)
   "Create or replace buffer with `name` using `content`. Then

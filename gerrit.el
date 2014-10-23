@@ -25,7 +25,6 @@ printed."
             (s-truncate 30 (assoc-default 'subject review))
             (assoc-default 'status review)
             (s-truncate 20 (assoc-default 'project review))
-            ;; TODO make the timestamp shorter (use relative timestamps)
             (gerrit-lib-format-time (assoc-default 'lastUpdated review)))))
 
 (defun gerrit-list-project (project)
