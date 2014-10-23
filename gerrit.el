@@ -107,7 +107,7 @@ printed."
 
 (defun gerrit-open-change (change-id)
   "Open a change in a new buffer and switch to it"
-  (message (concat "gerrit-open-change" change-id))
+  (message (concat "gerrit-open-change " change-id))
   (gerrit-lib-with-make-buffer change-id
                                (gerrit-detail-review
                                 (json-read-from-string
