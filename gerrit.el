@@ -93,7 +93,11 @@ printed."
    ))
 
 (defun gerrit-display-comment (comment)
-  "Format a comment given as an alist; return a string"
+  "Format a comment given as an alist; return a string formatted like:
+
+  Commenter Name: First Line of the Comment (relative time)
+
+  Additional comment lines if any."
   (let ((split-message (s-split-up-to "\n" (assoc-default 'message comment) 1)))
     (let ((header (car split-message))
           (body (cadr split-message)))
