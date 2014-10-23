@@ -76,21 +76,30 @@ printed."
                    (assoc-default 'revision patch-set)))
            (assoc-default 'patchSets review)))
    "\n"
-   (apply 'gerrit-lib-columnize "%-70s  %4s, %4s"
-          (mapcar
-           (lambda (file)
-             (list (if (equal "/COMMIT_MSG" (assoc-default 'file file))
-                       "Commit Message"
-                     (assoc-default 'file file)
-                     )
-                   (format "+%s" (assoc-default 'insertions file))
-                   (assoc-default 'deletions file)))
-           (assoc-default 'files (assoc-default 'currentPatchSet review))))
+   (gerrit-display-change-files review)
    "\n\n\n"
    (mapconcat 'gerrit-display-comment
               (assoc-default 'comments review)
               "\n\n")
    ))
+
+(defun gerrit-display-change-files (review)
+  "Takes a review alist and returns a summary as a string. e.g:
+  Commit Message                                                  +27,    0
+  .gitignore                                                       +1,   -1
+  .rubocop.yml                                                     +1,    0
+  Gemfile                                                          +1,    0
+  Rakefile                                                        +33,    0
+  TESTING.md                                                       +9,   -9"
+  (apply 'gerrit-lib-columnize "%-69s  %4s, %4s"
+         (mapcar
+          (lambda (file)
+            (list (if (equal "/COMMIT_MSG" (assoc-default 'file file))
+                      "Commit Message"
+                    (assoc-default 'file file))
+                  (format "+%s" (assoc-default 'insertions file))
+                  (assoc-default 'deletions file)))
+          (assoc-default 'files (assoc-default 'currentPatchSet review)))))
 
 (defun gerrit-display-comment (comment)
   "Format a comment given as an alist; return a string formatted like:
