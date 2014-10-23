@@ -69,12 +69,7 @@ printed."
                      "")))
            (assoc-default 'approvals (assoc-default 'currentPatchSet review))))
    "\n\n"
-   (apply 'gerrit-lib-columnize "Patch Set %2s - %s"
-          (mapcar
-           (lambda (patch-set)
-             (list (assoc-default 'number patch-set)
-                   (assoc-default 'revision patch-set)))
-           (assoc-default 'patchSets review)))
+   (gerrit-display-change-patches review)
    "\n"
    (gerrit-display-change-files review)
    "\n\n\n"
@@ -82,6 +77,17 @@ printed."
               (assoc-default 'comments review)
               "\n\n")
    ))
+
+(defun gerrit-display-change-patches (review)
+  "Takes a review alist and returns the list of patches as a string. e.g.
+  Patch Set  1 - 23a1b9ed539405a9b850ce219c02de5d302038af
+  Patch Set  2 - 2f43910e1ec023e695b0087915c8c7fd5600b394"
+  (apply 'gerrit-lib-columnize "Patch Set %2s - %s"
+         (mapcar
+          (lambda (patch-set)
+            (list (assoc-default 'number patch-set)
+                  (assoc-default 'revision patch-set)))
+          (assoc-default 'patchSets review))))
 
 (defun gerrit-display-change-files (review)
   "Takes a review alist and returns a summary as a string. e.g:
