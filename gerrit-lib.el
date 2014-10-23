@@ -85,12 +85,12 @@
        (goto-char 0))
      (switch-to-buffer buf)))
 
-(defun gerrit-lib-positivize (vote)
+(defun gerrit-lib-format-vote (vote)
   "Add a + sign where there is no -. Useful for +1/+2 reviews"
   (if (string-match (rx-to-string `(: bos "-") t)
                     vote)
-      vote
-    (concat "+" vote)))
+      (propertize vote 'face 'gerrit-downvote)
+    (propertize (concat "+" vote) 'face 'gerrit-upvote)))
 
 (defun gerrit-lib-quit-window (&optional kill-buffer)
   "Bury the buffer and delete its window.  With a prefix argument, kill the
