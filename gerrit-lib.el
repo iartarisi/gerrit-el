@@ -104,3 +104,30 @@ buffer instead."
                      string)
        t))
 
+;; This was copied from the development branch of the s.el project until
+;; they release a new version
+(defun s-split-up-to (separator s n &optional omit-nulls)
+  "Split S up to N times into substrings bounded by matches for regexp SEPARATOR.
+
+If OMIT-NULLS is non-nil, zero-length substrings are omitted.
+
+See also `s-split'."
+  (save-match-data
+    (let ((op 0)
+          (r nil))
+      (with-temp-buffer
+        (insert s)
+        (setq op (goto-char (point-min)))
+        (while (and (re-search-forward separator nil t)
+                    (< 0 n))
+          (let ((sub (buffer-substring-no-properties op (match-beginning 0))))
+            (unless (and omit-nulls
+                         (equal sub ""))
+              (push sub r)))
+          (setq op (goto-char (match-end 0)))
+          (setq n (1- n)))
+        (if (/= (point) (point-max))
+            (push (buffer-substring-no-properties op (point-max)) r)
+          (unless omit-nulls
+            (push "" r))))
+      (nreverse r))))
