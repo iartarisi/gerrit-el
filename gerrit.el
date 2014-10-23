@@ -64,17 +64,19 @@ printed."
   Created         12:46
   Updated         13:25
   Status          NEW"
-  (gerrit-lib-columnize "%-15s %s"
-                        (list "Change-Id" (assoc-default 'id review))
-                        (list "Owner" (assoc-default 'name (assoc-default 'owner review)))
-                        (list "Project" (assoc-default 'project review))
-                        (list "Branch" (assoc-default 'branch review))
-                        (list "Topic" (assoc-default 'topic review))
-                        (list "Created" (gerrit-lib-format-time
-                                         (assoc-default 'createdOn review)))
-                        (list "Updated" (gerrit-lib-format-time
-                                         (assoc-default 'lastUpdated review)))
-                        (list "Status" (assoc-default 'status review))))
+  (gerrit-lib-columnize
+   "%-15s %s"
+   (list "Change-Id" (assoc-default 'id review))
+   (list "Owner" (propertize (assoc-default 'name (assoc-default 'owner review))
+                             'face 'gerrit-names))
+   (list "Project" (assoc-default 'project review))
+   (list "Branch" (assoc-default 'branch review))
+   (list "Topic" (assoc-default 'topic review))
+   (list "Created" (gerrit-lib-format-time
+                    (assoc-default 'createdOn review)))
+   (list "Updated" (gerrit-lib-format-time
+                    (assoc-default 'lastUpdated review)))
+   (list "Status" (assoc-default 'status review))))
 
 (defun gerrit-display-change-reviews (review)
   "Takes a review alist and returns a table of the reviews/approvals. e.g.
@@ -89,7 +91,9 @@ printed."
           '("Name" "Code-Review" "Verified" "Workflow")
           (mapcar
            (lambda (approval)
-             (list (assoc-default 'name (assoc-default 'by approval))
+             (list (propertize
+                    (assoc-default 'name (assoc-default 'by approval))
+                    'face 'gerrit-names)
                    (if (equal "Code-Review" (assoc-default 'type approval))
                        (gerrit-lib-format-vote (assoc-default 'value approval))
                      "")
@@ -126,8 +130,10 @@ printed."
             (list (if (equal "/COMMIT_MSG" (assoc-default 'file file))
                       "Commit Message"
                     (assoc-default 'file file))
-                  (format "+%s" (assoc-default 'insertions file))
-                  (assoc-default 'deletions file)))
+                  (propertize (format "+%s" (assoc-default 'insertions file))
+                              'face 'gerrit-diff-add)
+                  (propertize (number-to-string (assoc-default 'deletions file))
+                              'face 'gerrit-diff-del)))
           (assoc-default 'files (assoc-default 'currentPatchSet review)))))
 
 (defun gerrit-display-comment (comment)
@@ -139,11 +145,14 @@ printed."
   (let ((split-message (s-split-up-to "\n" (assoc-default 'message comment) 1)))
     (let ((header (car split-message))
           (body (cadr split-message)))
-      (concat (format "%s: %s (%s)"
-                      (assoc-default 'name (assoc-default 'reviewer comment))
-                      header
-                      (gerrit-lib-format-time
-                       (assoc-default 'timestamp comment)))
+      (concat (propertize (assoc-default 'name (assoc-default 'reviewer comment))
+                          'face 'gerrit-names)
+              ": "
+              (propertize (format "%s (%s)"
+                                  header
+                                  (gerrit-lib-format-time
+                                   (assoc-default 'timestamp comment)))
+                          'face 'gerrit-background-info)
               (when body (concat "\n" body))))))
 
 (defun gerrit-open-change (change-id)

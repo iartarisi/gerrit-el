@@ -28,3 +28,21 @@
 (defface gerrit-downvote
   '((t :foreground "red"))
   :group 'gerrit-faces)
+
+(defface gerrit-diff-add
+  '((t :inherit diff-added))
+  :group 'gerrit-faces)
+
+(defface gerrit-diff-del
+  '((t :inherit diff-removed))
+  :group 'gerrit-faces)
+
+(defface gerrit-background-info
+  '((t :foreground "dark khaki"))
+  :group 'gerrit-faces)
+
+(defface gerrit-names
+  '((t :foreground "khaki"))
+  :group 'gerrit-faces)
+
+
