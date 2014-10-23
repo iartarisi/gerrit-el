@@ -53,7 +53,26 @@ printed."
    "\n\n"
    (assoc-default 'commitMessage review)
    "\n\n"
-   (apply 'gerrit-lib-columnize "%-20s %11s  %8s  %8s"
+   (gerrit-display-change-reviews review)
+   "\n\n"
+   (gerrit-display-change-patches review)
+   "\n"
+   (gerrit-display-change-files review)
+   "\n\n\n"
+   (mapconcat 'gerrit-display-comment
+              (assoc-default 'comments review)
+              "\n\n")))
+
+(defun gerrit-display-change-reviews (review)
+  "Takes a review alist and returns a table of the reviews/approvals. e.g.
+  Name                 Code-Review  Verified  Workflow
+  DB Datasets CI                          +1
+  Citrix XenServer CI                     +1
+  Microsoft Hyper-V CI                    +1
+  Jane Devie                    +2
+  Joe Dev                       +2
+  Joe Dev                                           +1"
+  (apply 'gerrit-lib-columnize "%-20s %11s  %8s  %8s"
           '("Name" "Code-Review" "Verified" "Workflow")
           (mapcar
            (lambda (approval)
@@ -67,16 +86,7 @@ printed."
                    (if (equal "Workflow" (assoc-default 'type approval))
                        (gerrit-lib-positivize (assoc-default 'value approval))
                      "")))
-           (assoc-default 'approvals (assoc-default 'currentPatchSet review))))
-   "\n\n"
-   (gerrit-display-change-patches review)
-   "\n"
-   (gerrit-display-change-files review)
-   "\n\n\n"
-   (mapconcat 'gerrit-display-comment
-              (assoc-default 'comments review)
-              "\n\n")
-   ))
+           (assoc-default 'approvals (assoc-default 'currentPatchSet review)))))
 
 (defun gerrit-display-change-patches (review)
   "Takes a review alist and returns the list of patches as a string. e.g.
